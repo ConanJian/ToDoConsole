@@ -40,11 +40,13 @@ namespace CallApi
         }
         public async Task AddToDoItemAsync(string urlAddition, string toDoMessage, Priority priorityNum)
         {
-            //await _client.PostAsync(urlAddition, content);
+            string queryParams = $"?message={toDoMessage}&priority={(int)priorityNum}";
+            await _client.PostAsync(urlAddition+queryParams, new StringContent(""));
         }
         public async Task DeleteToDoItemAsync(string urlAddition, int listNum)
         {
-            //await _client.PostAsync(urlAddition, content);
+            string queryParams = $"?listNum={listNum}";
+            await _client.PostAsync(urlAddition+queryParams, new StringContent(""));
         }
 
         private List<ToDoModel> ConvertJArrayToToDoList(JArray responseMessageContent)
