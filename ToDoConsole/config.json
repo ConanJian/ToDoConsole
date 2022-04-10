@@ -1,9 +1,0 @@
-{
-  "baseUrl": "https://localhost:7217/",
-  "toDoUrlAdditions": {
-    "GetEntireList": "ToDo/GetEntireToDoList",
-    "GetPriorityList": "ToDo/GetPriorityList",
-    "CreateItem": "ToDo/CreateToDoItem",
-    "DeleteItem":  "ToDo/DeleteToDoItem"
-  }
-}
