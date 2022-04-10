@@ -10,43 +10,44 @@ namespace CallApi
     public class ToDoApiClient: IDisposable
     {
         private readonly HttpClient _client;
-        public ToDoApiClient(string uri)
+        private readonly Configuration _config = new Configuration();
+        public ToDoApiClient()
         { 
             _client = new HttpClient();
-            _client.BaseAddress = new Uri(uri);
+            _client.BaseAddress = new Uri(_config.BaseUrl);
         }
-        public async Task<List<ToDoModel>> GetCompleteToDoListAsync(string urlAddition)
+        public async Task<List<ToDoModel>> GetCompleteToDoListAsync()
         {
             //Calls the Api
-            HttpResponseMessage response = await _client.GetAsync(urlAddition);
+            HttpResponseMessage response = await _client.GetAsync(_config.CompleteToDoListUrl);
 
             //Converts the returned response into a JArray
-            string temp = await response.RequestMessage.Content.ReadAsStringAsync();
+            string temp = await response.Content.ReadAsStringAsync();
             JArray responseMessageContent = JArray.Parse(temp);
 
             return ConvertJArrayToToDoList(responseMessageContent);
         }
-        public async Task<List<ToDoModel>> GetPriorityToDoListAsync(string urlAddition, Priority priority)
+        public async Task<List<ToDoModel>> GetPriorityToDoListAsync(Priority priority)
         {
             //Adds the priority to Api as a queryParam
-            string queryParams = $"?priorityNum={(int)priority}";
-            HttpResponseMessage response = await _client.GetAsync(urlAddition+queryParams);
+            string queryParams = $"?priority={(int)priority}";
+            HttpResponseMessage response = await _client.GetAsync(_config.PriorityToDoListUrl+queryParams);
 
             //Turns Response into a JArray
-            string temp = await response.RequestMessage.Content.ReadAsStringAsync();
+            string temp = await response.Content.ReadAsStringAsync();
             JArray responseMessageContent = JArray.Parse(temp);
 
             return ConvertJArrayToToDoList(responseMessageContent);
         }
-        public async Task AddToDoItemAsync(string urlAddition, string toDoMessage, Priority priorityNum)
+        public async Task AddToDoItemAsync( string toDoMessage, Priority priorityNum)
         {
             string queryParams = $"?message={toDoMessage}&priority={(int)priorityNum}";
-            await _client.PostAsync(urlAddition+queryParams, new StringContent(""));
+            await _client.PostAsync(_config.CreateToDoListUrl+queryParams, new StringContent(""));
         }
-        public async Task DeleteToDoItemAsync(string urlAddition, int listNum)
+        public async Task DeleteToDoItemAsync(int listNum)
         {
             string queryParams = $"?listNum={listNum}";
-            await _client.PostAsync(urlAddition+queryParams, new StringContent(""));
+            await _client.PostAsync(_config.DeleteToDoListUrl+queryParams, new StringContent(""));
         }
 
         private List<ToDoModel> ConvertJArrayToToDoList(JArray responseMessageContent)
@@ -56,9 +57,9 @@ namespace CallApi
             {
                 JObject toDoItem = (JObject)responseMessageContent[i];
 
-                int listNum = (int)toDoItem["listNum"];
-                string toDoMessage = toDoItem["message"].ToString();
-                int priorityNum = (int)toDoItem["priorityNum"];
+                int listNum = (int)toDoItem["ListNum"];
+                string toDoMessage = toDoItem["Message"].ToString();
+                int priorityNum = (int)toDoItem["Priority"];
 
                 toDoList.Add(new ToDoModel(listNum, toDoMessage, priorityNum));
             }
