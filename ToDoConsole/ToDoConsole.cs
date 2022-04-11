@@ -18,8 +18,11 @@ namespace ToDoConsole
                 {
                     try
                     {
-                        Console.WriteLine("\nCommand: ");
+                        Console.Write("\nCommand: ");
                         string command = Console.ReadLine().ToLower();
+
+                        //Separate the next output from the command I read in.
+                        Console.WriteLine();
 
                         switch (command)
                         {

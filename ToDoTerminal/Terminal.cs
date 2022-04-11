@@ -21,37 +21,81 @@ namespace ToDoTerminal
         }
         public async Task PrintPriorityToDoList()
         {
-            Console.Write($"ToDoList by Priority\n" +
+            string prompt = $"ToDoList by Priority\n" +
                 $"Options: (1, 2, 3)\n" +
-                $"Priority: ");
+                $"Priority: ";
+            string failurePrompt = "Incorrect Input try again: ";
 
-            bool notCompleted = true;
-            int priority = -1;
-            while (notCompleted)
-            {
-                try
+            string userInput = GetInput(prompt, failurePrompt,
+                (priorityInput) =>
                 {
-                    //Reads in input and validates if it is valid
-                    string priorityInput = Console.ReadLine();
+                    int priority = -1;
                     bool isInteger = int.TryParse(priorityInput, out priority);
                     if (!isInteger)
                     {
-                        throw new Exception("priorityInput not an integer");
+                        //"priorityInput not an integer
+                        return false;
                     }
                     if (priority > 3 || priority < 1)
                     {
-                        throw new Exception("priorityInput not 1, 2, or 3");
+                        //priorityInput not 1, 2, or 3
+                        return false;
                     }
-                    notCompleted = false;
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Incorrect Input try again: ");
-                }
-            }
+                    return true;
+                });
 
+            int priority = int.Parse(userInput);
             var toDoList = await _client.GetPriorityToDoListAsync((Priority)priority);
             PrintToDoList(toDoList);
+        }
+        //Issue with deletion: how do you know what to delete?
+        //Maybe send list with listNums to help with deletion, would make it unambigious
+        //How would I maintain cache if done this way?
+
+//        public async Task CreateToDoItem(string message, int priority)
+//        {
+//            await _client.AddToDoItemAsync(message, (Priority)priority);
+//            try
+//            {
+//                int listNum = await _client.GetMostRecentListNum();
+//                toDoListCache.Add(new ToDoModel(listNum, message, (Priority)priority));
+//            }
+//            catch (Exception e)
+//            {
+//#if DEBUG
+//                Console.WriteLine("Error, get most recent list num failed to work");
+//#endif
+//                toDoListCache = await _client.GetCompleteToDoListAsync();
+//            } 
+//        }
+        //public async Task DeleteToDoItem(int uiListNum)
+        //{
+        //    //The number that the client sees is the indexNum of the cache +1
+        //    int cacheIndexNum = uiListNum - 1;
+        //    await _client.DeleteToDoItemAsync(cacheIndexNum);
+        //    toDoListCache.RemoveAt(cacheIndexNum);
+        //}
+        private string GetInput(string prompt, string failurePrompt, Func<string, bool> isValid)
+        {
+            Console.Write(prompt);
+            string userInput = "";
+            bool notCompleted = true;
+            while (notCompleted)
+            {
+                //Reads in input and validates if it is valid
+                userInput = Console.ReadLine();
+                if (isValid(userInput))
+                {
+                    notCompleted = false;
+                }
+                else
+                {
+                    Console.Write(failurePrompt);
+                }
+            }
+            //Used to keep retrival of input separate from whatever happens next
+            Console.WriteLine();
+            return userInput;
         }
         private void PrintToDoList(List<ToDoModel> toDoList)
         {
