@@ -4,7 +4,8 @@
     "GetEntireList": "ToDo/GetEntireToDoList",
     "GetPriorityList": "ToDo/GetPriorityList",
     "CreateItem": "ToDo/CreateToDoItem",
-    "DeleteItem": "ToDo/DeleteToDoItem"
+    "DeleteItem": "ToDo/DeleteToDoItem",
+    "GetLatestListNum":  "ToDo/GetLatestListNum"
   },
   "test":  "test"
 }

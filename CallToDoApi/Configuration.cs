@@ -31,7 +31,10 @@ namespace CallApi
         {
             get { return GetValue("toDoUrlAdditions:DeleteItem"); }
         }
-
+        public string GetLatestListNumUrl
+        {
+            get { return GetValue("toDoUrlAdditions:GetLatestListNum"); }
+        }
         private string GetValue(string jsonPath)
         {
             string value = _config[jsonPath];

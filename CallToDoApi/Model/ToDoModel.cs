@@ -13,11 +13,11 @@ namespace CallApi
         public int ListNum { get { return listNum; } }
         public string Message { get { return message; } }
         public int Priority { get { return priority; } }
-        public ToDoModel(int listNum, string message, int priority)
+        public ToDoModel(int listNum, string message, Priority priority)
         { 
             this.listNum = listNum;
             this.message = message;
-            this.priority = priority;
+            this.priority = (int)priority;
         }
     }
     public enum Priority
