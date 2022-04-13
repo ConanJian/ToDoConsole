@@ -32,6 +32,9 @@ namespace ToDoConsole
                             case "priority list":
                                 await terminal.PrintPriorityToDoList();
                                 break;
+                            case "add item":
+                                await terminal.CreateToDoItem();
+                                break;
                             case "quit":
                                 running = false;
                                 break;

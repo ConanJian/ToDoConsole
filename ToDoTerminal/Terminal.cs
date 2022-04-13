@@ -52,22 +52,44 @@ namespace ToDoTerminal
         //Maybe send list with listNums to help with deletion, would make it unambigious
         //How would I maintain cache if done this way?
 
-//        public async Task CreateToDoItem(string message, int priority)
-//        {
-//            await _client.AddToDoItemAsync(message, (Priority)priority);
-//            try
-//            {
-//                int listNum = await _client.GetMostRecentListNum();
-//                toDoListCache.Add(new ToDoModel(listNum, message, (Priority)priority));
-//            }
-//            catch (Exception e)
-//            {
-//#if DEBUG
-//                Console.WriteLine("Error, get most recent list num failed to work");
-//#endif
-//                toDoListCache = await _client.GetCompleteToDoListAsync();
-//            } 
-//        }
+        public async Task CreateToDoItem()
+        {
+            string message = GetInput("ToDoItem Content: ", "Error, Invalid Content. Please try again: ",
+                (string messageInput) =>
+                {
+                    return true;
+                });
+
+            string priorityInput = GetInput("Priority: ", "Invalid priority. Should be numbers (1, 2, 3): ",
+                (input) =>
+                {
+                    int priority = -1;
+                    bool isInt = int.TryParse(input, out priority);
+
+                    if (!isInt)
+                        return false;
+                    else if (priority < 4 && priority > 0)
+                        return true;
+                    else
+                        return false;
+                });
+
+            int priority = int.Parse(priorityInput);
+
+            await _client.AddToDoItemAsync(message, (Priority)priority);
+            try
+            {
+                int listNum = await _client.GetMostRecentListNum();
+                toDoListCache.Add(new ToDoModel(listNum, message, (Priority)priority));
+            }
+            catch (Exception e)
+            {
+#if DEBUG
+                Console.WriteLine("Error, get most recent list num failed to work");
+#endif
+                toDoListCache = await _client.GetCompleteToDoListAsync();
+            }
+        }
         //public async Task DeleteToDoItem(int uiListNum)
         //{
         //    //The number that the client sees is the indexNum of the cache +1
