@@ -125,7 +125,7 @@ namespace ToDoTerminal
             {
                 ToDoModel toDoItem = toDoList[i];
                 string output = $"  {i + 1}) {toDoItem.Message}" +
-                    $"\nPriority: {(Priority)toDoItem.Priority}";
+                    $"\nPriority: {(Priority)toDoItem.Priority}({toDoItem.Priority})";
                 Console.WriteLine(output);
             }
         }
