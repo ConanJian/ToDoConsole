@@ -97,6 +97,7 @@ namespace ToDoTerminal
         {
             Console.WriteLine("Current ToDOList");
             await PrintCompleteToDoList();
+            Console.WriteLine();
 
             string prompt1 = "Input the number of the toDoList you wish to delete: ";
             string prompt2 = "Invalid number, try again (Use number format like 1 or 2): ";
