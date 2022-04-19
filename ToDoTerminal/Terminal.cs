@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 
 namespace ToDoTerminal
 {
+    //possibly add an update functionality to update todo items
     public class Terminal: IDisposable
     {
         private readonly ToDoApiClient _client;
+        //Issue with cache and multiple people accessing a database?
         private List<ToDoModel> toDoListCache;
         public Terminal()
         {
@@ -16,7 +18,7 @@ namespace ToDoTerminal
         }
         public async Task PrintCompleteToDoList()
         {
-            toDoListCache = await _client.GetCompleteToDoListAsync();
+            //toDoListCache = await _client.GetCompleteToDoListAsync();
             PrintToDoList(toDoListCache);
         }
         public async Task PrintPriorityToDoList()
@@ -48,10 +50,6 @@ namespace ToDoTerminal
             var toDoList = await _client.GetPriorityToDoListAsync((Priority)priority);
             PrintToDoList(toDoList);
         }
-        //Issue with deletion: how do you know what to delete?
-        //Maybe send list with listNums to help with deletion, would make it unambigious
-        //How would I maintain cache if done this way?
-
         public async Task CreateToDoItem()
         {
             string message = GetInput("ToDoItem Content: ", "Error, Invalid Content. Please try again: ",
@@ -60,7 +58,10 @@ namespace ToDoTerminal
                     return true;
                 });
 
-            string priorityInput = GetInput("Priority: ", "Invalid priority. Should be numbers (1, 2, 3): ",
+            string priorityDescriptionPrompt = $"{(int)Priority.Utmost}) {Priority.Utmost}\n" +
+                $"{(int)Priority.Do_Soon}) {Priority.Do_Soon}\n" +
+                $"{(int)Priority.Can_Wait}) {Priority.Can_Wait}\n";
+            string priorityInput = GetInput(priorityDescriptionPrompt+"Priority: ", "Invalid priority. Should be numbers (1, 2, 3): ",
                 (input) =>
                 {
                     int priority = -1;
@@ -112,8 +113,9 @@ namespace ToDoTerminal
             };
             int input = int.Parse(GetInput(prompt1, prompt2, validation));
 
-            await _client.DeleteToDoItemAsync(toDoListCache[input - 1].ListNum);
-
+            ToDoModel removedItem = toDoListCache[input - 1];
+            await _client.DeleteToDoItemAsync(removedItem.ListNum);
+            toDoListCache.Remove(removedItem);
         }
         private string GetInput(string prompt, string failurePrompt, Func<string, bool> isValid)
         {

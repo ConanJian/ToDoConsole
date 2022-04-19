@@ -32,11 +32,20 @@ namespace ToDoConsole
                             case "priority list":
                                 await terminal.PrintPriorityToDoList();
                                 break;
-                            case "add item":
+                            case "add":
                                 await terminal.CreateToDoItem();
                                 break;
                             case "delete":
                                 await terminal.DeleteToDoItem();
+                                break;
+                            case "help":
+                                Console.WriteLine("These are the possible commands\n" +
+                                    "--------------------------\n" +
+                                    "list: list the entire to-do list\n" +
+                                    "priority list: gives all items in the list of a certain priority\n" +
+                                    "add: add a to-do item\n" +
+                                    "delete: delete a to-do item\n" +
+                                    "quit: end the program");
                                 break;
                             case "quit":
                                 running = false;
