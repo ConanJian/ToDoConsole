@@ -35,6 +35,9 @@ namespace ToDoConsole
                             case "add item":
                                 await terminal.CreateToDoItem();
                                 break;
+                            case "delete":
+                                await terminal.DeleteToDoItem();
+                                break;
                             case "quit":
                                 running = false;
                                 break;

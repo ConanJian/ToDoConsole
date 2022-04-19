@@ -79,6 +79,7 @@ namespace ToDoTerminal
             await _client.AddToDoItemAsync(message, (Priority)priority);
             try
             {
+                //when add is successful add to cache
                 int listNum = await _client.GetMostRecentListNum();
                 toDoListCache.Add(new ToDoModel(listNum, message, (Priority)priority));
             }
@@ -87,16 +88,32 @@ namespace ToDoTerminal
 #if DEBUG
                 Console.WriteLine("Error, get most recent list num failed to work");
 #endif
+                //I couldn't get latest listNum, so I couldn't just add to cache
+                //instead we just get everything all over again
                 toDoListCache = await _client.GetCompleteToDoListAsync();
             }
         }
-        //public async Task DeleteToDoItem(int uiListNum)
-        //{
-        //    //The number that the client sees is the indexNum of the cache +1
-        //    int cacheIndexNum = uiListNum - 1;
-        //    await _client.DeleteToDoItemAsync(cacheIndexNum);
-        //    toDoListCache.RemoveAt(cacheIndexNum);
-        //}
+        public async Task DeleteToDoItem()
+        {
+            Console.WriteLine("Current ToDOList");
+            await PrintCompleteToDoList();
+
+            string prompt1 = "Input the number of the toDoList you wish to delete: ";
+            string prompt2 = "Invalid number, try again (Use number format like 1 or 2): ";
+            Func<string, bool> validation = (input) =>
+            {
+                int validInput = -1;
+                bool isInt = int.TryParse(input, out validInput);
+                if (isInt && validInput <= toDoListCache.Count && validInput > 0)
+                    return true;
+                else
+                    return false;
+            };
+            int input = int.Parse(GetInput(prompt1, prompt2, validation));
+
+            await _client.DeleteToDoItemAsync(toDoListCache[input - 1].ListNum);
+
+        }
         private string GetInput(string prompt, string failurePrompt, Func<string, bool> isValid)
         {
             Console.Write(prompt);
